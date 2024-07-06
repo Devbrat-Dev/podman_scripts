@@ -1,0 +1,36 @@
+# https://docs.podman.io/en/latest/markdown/podman-systemd.unit.5.html#container-units-container
+
+[Unit]
+Description=Immich postgres database container
+After=local-fs.target
+
+[Container]
+AutoUpdate=registry
+ContainerName=immich-postgres
+#Environment=POSTGRES_PASSWORD=postgres  (Using podman secret)
+Environment=POSTGRES_USER=postgres
+Environment=POSTGRES_DB=immich
+HealthCmd="pg_isready -d immich -U postgres"
+HealthInterval=2m
+HealthRetries=5
+HealthStartPeriod=2m
+HealthStartupInterval=1m
+HealthTimeout=20s
+Image=docker.io/tensorchord/pgvecto-rs:pg14-v0.2.1-rootless
+LogDriver=journald
+Pod=immich.pod
+# 🔒⬇️
+Secret=immich-database-password,type=env,target=POSTGRES_PASSWORD
+Volume=immich-database.volume:/var/lib/postgresql/data
+
+[Service]
+# Restart service
+Restart=on-failure
+# Extend Timeout to allow time to pull the image
+TimeoutStartSec=900
+
+[Install]
+# Start by default on boot
+WantedBy=default.target
+WantedBy=immich-server.service
+WantedBy=immich-microservices.service

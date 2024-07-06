@@ -1,0 +1,24 @@
+# https://docs.podman.io/en/latest/markdown/podman-systemd.unit.5.html#container-units-container
+
+[Unit]
+Description=Immich adminer container
+After=local-fs.target
+
+[Container]
+AutoUpdate=registry
+ContainerName=immich-adminer
+Environment=ADMINER_DEFAULT_SERVER='immich-database'
+Environment=ADMINER_DESIGN=lucas-sandery
+Image=docker.io/adminer:latest
+LogDriver=journald
+Pod=immich.pod
+
+[Service]
+# Restart service
+Restart=on-failure
+# Extend Timeout to allow time to pull the image
+TimeoutStartSec=900
+
+[Install]
+# Start by default on boot
+WantedBy=default.target

@@ -1,0 +1,8 @@
+# https://docs.podman.io/en/latest/markdown/podman-systemd.unit.5.html#volume-units-volume
+
+[Unit]
+Description=Immich machine learning model cache volume
+
+[Volume]
+
+VolumeName=immich-machine_learning

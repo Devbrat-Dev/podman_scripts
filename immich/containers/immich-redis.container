@@ -1,0 +1,31 @@
+# https://docs.podman.io/en/latest/markdown/podman-systemd.unit.5.html#container-units-container
+
+[Unit]
+Description=Immich redis container
+After=local-fs.target
+
+[Container]
+AutoUpdate=registry
+ContainerName=immich-redis
+HealthCmd="redis-cli ping | grep PONG"
+HealthInterval=2m
+HealthRetries=5
+HealthStartPeriod=2m
+HealthStartupInterval=1m
+HealthTimeout=20s
+Image=docker.io/redis:alpine
+LogDriver=journald
+Pod=immich.pod
+Volume=immich-redis.volume:/data
+
+[Service]
+# Restart service
+Restart=on-failure
+# Extend Timeout to allow time to pull the image
+TimeoutStartSec=900
+
+[Install]
+# Start by default on boot
+WantedBy=default.target
+WantedBy=immich-server.service
+WantedBy=immich-microservices.service

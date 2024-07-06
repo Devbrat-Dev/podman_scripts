@@ -1,0 +1,41 @@
+# https://docs.podman.io/en/latest/markdown/podman-systemd.unit.5.html#container-units-container
+
+[Unit]
+Description=Immich microservices container
+After=local-fs.target
+After=immich-database.service
+After=immich-redis.service
+
+[Container]
+# VAAPI
+AddDevice=/dev/dri:/dev/dri
+AutoUpdate=registry
+ContainerName=immich-microservices
+Environment=UPLOAD_LOCATION="./library"
+Environment=IMMICH_VERSION="release"
+Environment=DB_HOSTNAME="immich-database"
+#Environment=DB_PASSWORD="postgres" (Using podman secret)
+Environment=DB_USERNAME="postgres"
+Environment=DB_DATABASE_NAME="immich"
+Environment=REDIS_HOSTNAME="immich-redis"
+Exec=start.sh microservices
+Image=ghcr.io/immich-app/immich-server:release
+LogDriver=journald
+Pod=immich.pod
+# 🔒⬇️
+Secret=immich-database-password,type=env,target=DB_PASSWORD
+Volume=immich-server.volume:/usr/src/app/upload
+Volume=/etc/localtime:/etc/localtime:ro
+# External path to media 🖼️⬇️
+Volume=<YOUR_VOLUME_HERE>:/mnt/external:ro
+
+[Service]
+# Restart service
+Restart=on-failure
+# Extend Timeout to allow time to pull the image
+TimeoutStartSec=900
+
+[Install]
+# Start by default on boot
+WantedBy=default.target
+
