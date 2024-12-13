@@ -1,0 +1,3 @@
+/containers
+.env
+IMMICH_DATABASE_PASSWORD.*

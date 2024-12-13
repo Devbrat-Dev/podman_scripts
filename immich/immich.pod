@@ -9,6 +9,6 @@ PodmanArgs=--add-host=immich-redis:127.0.0.1
 PodmanArgs=--add-host=immich-machine-learning:127.0.0.1
 PodName=immich
 # Immich server [HOST]:[CONTAINER]
-PublishPort=2283:3001/tcp
+PublishPort=2283:2283/tcp
 # Adminer [HOST]:[CONTAINER]
 PublishPort=2284:8080/tcp

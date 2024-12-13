@@ -8,9 +8,14 @@ After=local-fs.target
 AutoUpdate=registry
 ContainerName=immich-postgres
 #Environment=POSTGRES_PASSWORD=postgres  (Using podman secret)
-Environment=POSTGRES_USER=postgres
-Environment=POSTGRES_DB=immich
-HealthCmd="pg_isready -d immich -U postgres"
+Environment=POSTGRES_USER={{ DB_USER }}
+Environment=POSTGRES_DB={{ DB_NAME }}
+Environment=POSTGRES_INITDB_ARGS=--data-checksums
+Exec=postgres -c shared_preload_libraries=vectors.so -c 'search_path="$user", public, vectors' -c logging_collector=on -c max_wal_size=2GB -c shared_buffers=512MB -c wal_compression=on
+HealthCmd="pg_isready --dbname="{{ DB_NAME }}" --username="{{ DB_USER }}" || exit 1 ; \
+Chksum=$(psql --dbname="{{ DB_NAME }}" --username="{{ DB_USER }}" --tuples-only --no-align --command='SELECT COALESCE(SUM(checksum_failures), 0) FROM pg_stat_database') ; \
+echo "checksum failure count is $Chksum" ; \
+[ "$Chksum" = "0" ] || exit 1"
 HealthInterval=2m
 HealthRetries=5
 HealthStartPeriod=2m
@@ -33,4 +38,3 @@ TimeoutStartSec=900
 # Start by default on boot
 WantedBy=default.target
 WantedBy=immich-server.service
-WantedBy=immich-microservices.service

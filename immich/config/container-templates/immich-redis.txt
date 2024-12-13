@@ -28,4 +28,3 @@ TimeoutStartSec=900
 # Start by default on boot
 WantedBy=default.target
 WantedBy=immich-server.service
-WantedBy=immich-microservices.service
