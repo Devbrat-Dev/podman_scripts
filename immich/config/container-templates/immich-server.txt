@@ -24,7 +24,7 @@ Secret=immich-database-password,type=env,target=DB_PASSWORD
 Volume=immich-server.volume:/usr/src/app/upload
 Volume=/etc/localtime:/etc/localtime:ro
 # External path to media 🖼️⬇️
-Volume={{ EXTERNAL_MEDIA_PATH }}:/mnt/external:ro
+Volume={{ EXTERNAL_MEDIA_PATH }}:/mnt/external:ro,z
 
 [Service]
 # Restart service
